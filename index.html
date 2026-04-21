@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Roboyan — Build robots. Code AI. Defy gravity.</title>
+<meta name="description" content="Project-first ed-tech for the next generation. Drones, IoT, AI/ML and Robotics taught through real projects." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+/* ── CSS Reset & Variables ───────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:          oklch(0.13 0.04 270);
+  --fg:          oklch(0.97 0.01 250);
+  --card:        oklch(0.19 0.05 275);
+  --border:      oklch(1 0 0 / 10%);
+  --muted:       oklch(0.72 0.04 260);
+  --neon:        oklch(0.85 0.22 145);
+  --neon-v:      oklch(0.65 0.27 305);
+  --neon-c:      oklch(0.85 0.16 215);
+  --destructive: oklch(0.65 0.25 27);
+  --radius:      0.75rem;
+  --shadow-neon: 0 0 24px oklch(0.85 0.22 145/.45), 0 0 60px oklch(0.85 0.22 145/.18);
+  --shadow-v:    0 0 24px oklch(0.65 0.27 305/.45), 0 0 60px oklch(0.65 0.27 305/.2);
+  --grad-neon:   linear-gradient(135deg, var(--neon-v), var(--neon-c), var(--neon));
+  --grad-hero:   radial-gradient(ellipse at 20% 0%, oklch(0.65 0.27 305/.35) 0%, transparent 60%),
+                 radial-gradient(ellipse at 80% 100%, oklch(0.85 0.22 145/.25) 0%, transparent 55%),
+                 linear-gradient(180deg, var(--bg), oklch(0.10 0.04 275));
+  --font-display: 'Orbitron', system-ui, sans-serif;
+  --font-mono:   'IBM Plex Mono', monospace;
+  --font-body:   'Inter', system-ui, sans-serif;
+  --transition:  cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--grad-hero);
+  background-attachment: fixed;
+  color: var(--fg);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Grid background overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(oklch(1 0 0/.04) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(1 0 0/.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+h1,h2,h3,h4,h5,h6 { font-family: var(--font-display); letter-spacing: -0.01em; }
+
+/* ── Utilities ───────────────────────────────────────────── */
+.container { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
+.glass {
+  background: linear-gradient(135deg, oklch(1 0 0/.08), oklch(1 0 0/.02));
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid var(--border);
+}
+.neon-border { box-shadow: var(--shadow-neon), inset 0 0 0 1px oklch(0.85 0.22 145/.5); }
+.text-gradient {
+  background: var(--grad-neon);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.text-neon   { color: var(--neon); }
+.text-neon-c { color: var(--neon-c); }
+.text-neon-v { color: var(--neon-v); }
+.text-muted  { color: var(--muted); }
+.font-mono   { font-family: var(--font-mono); }
+.font-display{ font-family: var(--font-display); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+
+@keyframes float-y {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50%     { transform: translateY(-18px) rotate(6deg); }
+}
+@keyframes fade-up {
+  from { opacity:0; transform:translateY(24px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes glow-pulse {
+  0%,100% { box-shadow: 0 0 18px oklch(0.85 0.22 145/.35), inset 0 0 0 1px oklch(0.85 0.22 145/.4); }
+  50%     { box-shadow: 0 0 38px oklch(0.85 0.22 145/.7),  inset 0 0 0 1px oklch(0.85 0.22 145/.7); }
+}
+
+.float-y { animation: float-y 8s ease-in-out infinite; }
+.glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
+.fade-up { animation: fade-up 0.7s var(--transition) both; }
+.fade-up-2 { animation: fade-up 0.8s 0.12s var(--transition) both; }
+.fade-up-3 { animation: fade-up 0.8s 0.26s var(--transition) both; }
+.fade-up-4 { animation: fade-up 0.8s 0.42s var(--transition) both; }
+
+/* Scroll-reveal */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s var(--transition), transform 0.6s var(--transition); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 0.05s; }
+.reveal-d2 { transition-delay: 0.13s; }
+.reveal-d3 { transition-delay: 0.21s; }
+.reveal-d4 { transition-delay: 0.29s; }
+
+/* ── Layout hidden / visible ─────────────────────────────── */
+.page { display: none; position: relative; z-index: 1; }
+.page.active { display: block; }
+
+/* ── NAV ─────────────────────────────────────────────────── */
+#site-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  background: oklch(0.13 0.04 270/.85);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 72px;
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.35rem; font-weight: 900;
+  background: var(--grad-neon);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  cursor: pointer; user-select: none; text-decoration: none;
+  transition: opacity .2s;
+}
+.nav-logo:hover { opacity: .8; }
+.nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+.nav-links a {
+  font-size: .875rem; font-weight: 500; color: var(--muted);
+  text-decoration: none; cursor: pointer;
+  transition: color .2s;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--neon); }
+.nav-toggle {
+  display: none; background: none; border: none; color: var(--fg);
+  cursor: pointer; padding: .5rem;
+}
+.nav-mobile {
+  display: none; flex-direction: column; gap: 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--border);
+  overflow: hidden; max-height: 0; transition: max-height .3s var(--transition);
+}
+.nav-mobile.open { max-height: 300px; }
+.nav-mobile a {
+  font-size: .875rem; font-weight: 500; color: var(--muted);
+  text-decoration: none; cursor: pointer; transition: color .2s;
+}
+.nav-mobile a:hover, .nav-mobile a.active { color: var(--neon); }
+
+@media (max-width: 767px) {
+  .nav-links  { display: none; }
+  .nav-toggle { display: block; }
+  .nav-mobile { display: flex; }
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .75rem 1.5rem; border-radius: var(--radius);
+  background: var(--neon); color: oklch(0.13 0.04 270);
+  font-weight: 700; font-size: .9rem; font-family: var(--font-display);
+  border: none; cursor: pointer; text-decoration: none;
+  box-shadow: var(--shadow-neon), inset 0 0 0 1px oklch(0.85 0.22 145/.5);
+  transition: transform .2s var(--transition), box-shadow .2s;
+}
+.btn-primary:hover { transform: scale(1.03); }
+
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .75rem 1.5rem; border-radius: var(--radius);
+  background: oklch(1 0 0/.05); color: var(--fg);
+  border: 1px solid var(--border); cursor: pointer; text-decoration: none;
+  font-weight: 600; font-size: .9rem; transition: background .2s;
+}
+.btn-ghost:hover { background: oklch(1 0 0/.09); }
+
+/* ── HOME PAGE ───────────────────────────────────────────── */
+#page-home { padding-top: 72px; }
+
+/* Hero */
+.hero {
+  position: relative; padding: 4rem 0 6rem;
+  overflow: hidden;
+}
+.hero-inner { text-align: center; max-width: 900px; margin: 0 auto; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .375rem 1rem; border-radius: 999px;
+  font-family: var(--font-mono); font-size: .7rem;
+  text-transform: uppercase; letter-spacing: .2em; color: var(--neon);
+  margin-bottom: 1.5rem;
+}
+.hero h1 {
+  font-size: clamp(2.6rem, 6vw, 5rem);
+  font-weight: 900; line-height: 1.05;
+  letter-spacing: -.02em; margin-bottom: 1.5rem;
+}
+.hero-sub {
+  font-size: 1.1rem; color: var(--muted);
+  max-width: 600px; margin: 0 auto 2.5rem;
+  line-height: 1.7;
+}
+.hero-ctas { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+
+/* Floating icons */
+.float-icon {
+  position: absolute;
+  border-radius: 1.25rem; padding: 1.25rem;
+  animation: float-y 8s ease-in-out infinite;
+}
+.fi-drone { top: 3rem; left: 6%; color: var(--neon); }
+.fi-code  { bottom: 2rem; right: 8%; color: var(--neon-v); box-shadow: var(--shadow-v); animation-delay: -2.5s; }
+.fi-chip  { top: 7rem; right: 15%; color: var(--neon-c); padding: 1rem; animation-delay: -5s; }
+
+@media (max-width: 767px) { .float-icon { display: none; } }
+
+/* Domain cards */
+.domain-section { padding: 5rem 0; }
+.section-label {
+  font-family: var(--font-mono); font-size: .7rem;
+  text-transform: uppercase; letter-spacing: .3em; color: var(--neon);
+  display: block; margin-bottom: .75rem;
+}
+.section-title {
+  font-size: clamp(2rem, 4vw, 3rem); font-weight: 700;
+  margin-bottom: 3rem; text-align: center;
+}
+.cards-grid { display: grid; gap: 1.5rem; }
+@media (min-width: 768px) { .cards-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.domain-card {
+  border-radius: 1.25rem; padding: 1.75rem;
+  position: relative; overflow: hidden;
+  transition: transform .3s var(--transition);
+}
+.domain-card:hover { transform: translateY(-6px); }
+.domain-card::before {
+  content: ''; position: absolute; inset: 0;
+  opacity: 0; transition: opacity .5s;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.domain-card:hover::before { opacity: 1; }
+.dc-ai::before    { background: radial-gradient(circle at 50% 0%, oklch(0.85 0.22 145/.15), transparent 70%); }
+.dc-rob::before   { background: radial-gradient(circle at 50% 0%, oklch(0.85 0.16 215/.15), transparent 70%); }
+.dc-drone::before { background: radial-gradient(circle at 50% 0%, oklch(0.65 0.27 305/.15), transparent 70%); }
+
+.card-icon {
+  width: 3.5rem; height: 3.5rem; border-radius: .875rem;
+  display: grid; place-items: center; margin-bottom: 1.25rem;
+}
+.ci-ai    { background: oklch(0.85 0.22 145/.12); color: var(--neon); }
+.ci-rob   { background: oklch(0.85 0.16 215/.12); color: var(--neon-c); }
+.ci-drone { background: oklch(0.65 0.27 305/.12); color: var(--neon-v); }
+
+.card-title { font-size: 1.5rem; font-weight: 700; margin-bottom: .6rem; }
+.card-desc  { font-size: .875rem; color: var(--muted); line-height: 1.65; margin-bottom: 1.25rem; }
+.tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+.tag {
+  font-family: var(--font-mono); font-size: .65rem;
+  padding: .25rem .6rem; border-radius: .4rem;
+  border: 1px solid var(--border);
+  background: oklch(1 0 0/.03); color: var(--muted);
+}
+
+/* Course Matrix */
+.matrix-section { padding: 5rem 0; }
+.courses-grid { display: grid; gap: 1rem; }
+@media (min-width: 640px) { .courses-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px){ .courses-grid { grid-template-columns: repeat(4, 1fr); } }
+
+.course-card {
+  border-radius: 1rem; padding: 1.25rem; position: relative;
+  overflow: hidden; transition: transform .25s var(--transition);
+  cursor: default;
+}
+.course-card:hover { transform: translateY(-4px); }
+.course-card::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit;
+  background: radial-gradient(circle at 50% 0%, oklch(0.85 0.22 145/.12), transparent 70%);
+  opacity: 0; transition: opacity .4s; pointer-events: none;
+}
+.course-card:hover::before { opacity: 1; }
+.course-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: .75rem; }
+.course-code { font-family: var(--font-mono); font-size: .7rem; color: var(--neon); font-weight: 600; }
+.level-b { color: var(--neon); }
+.level-i { color: var(--neon-c); }
+.level-a { color: var(--neon-v); }
+.course-name { font-size: 1.05rem; font-weight: 700; margin-bottom: .75rem; font-family: var(--font-display); }
+.course-footer { display: flex; justify-content: space-between; font-size: .75rem; color: var(--muted); }
+
+/* ── COURSES PAGE ────────────────────────────────────────── */
+#page-courses { padding-top: 72px; }
+.page-hero { padding: 4rem 0 3rem; text-align: center; }
+.page-hero h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; margin-bottom: 1rem; }
+.page-hero p  { color: var(--muted); max-width: 600px; margin: 0 auto; line-height: 1.7; }
+
+.filter-row { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; margin: 2rem 0 3rem; }
+.filter-btn {
+  padding: .5rem 1.25rem; border-radius: .65rem; font-weight: 600;
+  font-size: .875rem; border: 1px solid var(--border);
+  background: oklch(1 0 0/.04); color: var(--muted);
+  cursor: pointer; transition: all .2s;
+}
+.filter-btn:hover { color: var(--neon); border-color: oklch(0.85 0.22 145/.3); }
+.filter-btn.active {
+  background: var(--neon); color: oklch(0.13 0.04 270);
+  border-color: transparent;
+  box-shadow: var(--shadow-neon);
+}
+
+/* ── ABOUT PAGE ──────────────────────────────────────────── */
+#page-about { padding-top: 72px; }
+
+.founders-grid { display: grid; gap: 2rem; max-width: 640px; margin: 0 auto; }
+@media (min-width: 640px) { .founders-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.founder-card { border-radius: 1.25rem; padding: 2rem; text-align: center; }
+.founder-avatar {
+  width: 4rem; height: 4rem; border-radius: 50%;
+  background: var(--grad-neon);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1rem; font-weight: 700; font-size: 1.1rem;
+  color: oklch(0.13 0.04 270);
+}
+.founder-name { font-size: 1.15rem; font-weight: 700; margin-bottom: .3rem; font-family: var(--font-display); }
+.founder-role { font-size: .875rem; color: var(--muted); }
+
+.values-grid { display: grid; gap: 1.5rem; }
+@media (min-width: 768px) { .values-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.value-card { border-radius: 1.25rem; padding: 1.75rem; }
+.value-icon  { color: var(--neon); margin-bottom: 1rem; }
+.value-title { font-size: 1.15rem; font-weight: 700; margin-bottom: .6rem; font-family: var(--font-display); }
+.value-desc  { font-size: .875rem; color: var(--muted); line-height: 1.65; }
+
+/* ── CONTACT PAGE ────────────────────────────────────────── */
+#page-contact { padding-top: 72px; }
+.contact-grid { display: grid; gap: 2rem; max-width: 900px; margin: 0 auto; }
+@media (min-width: 768px) { .contact-grid { grid-template-columns: 2fr 1fr; } }
+
+.form-card { border-radius: 1.25rem; padding: 2.25rem; }
+.form-group { margin-bottom: 1.5rem; }
+label { display: block; font-size: .875rem; font-weight: 500; margin-bottom: .5rem; }
+.form-input, .form-select, .form-textarea {
+  width: 100%; padding: .625rem 1rem; border-radius: .65rem;
+  background: oklch(1 0 0/.04); border: 1px solid var(--border);
+  color: var(--fg); font-family: var(--font-body); font-size: .9rem;
+  outline: none; transition: border-color .2s, box-shadow .2s;
+}
+.form-input::placeholder, .form-textarea::placeholder { color: oklch(1 0 0/.3); }
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: oklch(0.85 0.22 145/.5);
+  box-shadow: 0 0 0 3px oklch(0.85 0.22 145/.12);
+}
+.form-select option { background: oklch(0.19 0.05 275); }
+.form-input.error, .form-select.error, .form-textarea.error { border-color: var(--destructive); }
+.form-textarea { resize: none; }
+.error-msg { color: var(--destructive); font-size: .8rem; margin-top: .35rem; display: none; }
+.error-msg.show { display: block; }
+
+.submit-btn {
+  width: 100%; padding: .875rem; border-radius: var(--radius);
+  background: var(--neon); color: oklch(0.13 0.04 270);
+  font-weight: 700; font-family: var(--font-display); font-size: .9rem;
+  border: none; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; gap: .5rem;
+  box-shadow: var(--shadow-neon), inset 0 0 0 1px oklch(0.85 0.22 145/.5);
+  transition: transform .2s var(--transition), opacity .2s;
+}
+.submit-btn:hover:not(:disabled) { transform: scale(1.02); }
+.submit-btn:disabled { opacity: .55; cursor: not-allowed; }
+
+.status-box {
+  margin-top: 1rem; padding: 1rem 1.25rem; border-radius: .75rem;
+  display: none; align-items: center; gap: .75rem; font-size: .875rem;
+}
+.status-box.show { display: flex; }
+.status-success { background: oklch(0.85 0.22 145/.1); border: 1px solid var(--neon); color: var(--neon); }
+.status-error   { background: oklch(0.65 0.25 27/.1); border: 1px solid var(--destructive); color: var(--destructive); }
+
+.sidebar-card { border-radius: 1.25rem; padding: 1.75rem; position: sticky; top: 6rem; }
+.sidebar-title { font-size: 1.1rem; font-weight: 700; font-family: var(--font-display); margin-bottom: .75rem; }
+.sidebar-desc  { font-size: .875rem; color: var(--muted); line-height: 1.65; margin-bottom: 1.25rem; }
+.btn-cyan {
+  width: 100%; padding: .6rem 1rem; border-radius: .65rem;
+  background: oklch(0.85 0.16 215/.15); border: 1px solid var(--neon-c);
+  color: var(--neon-c); font-weight: 600; font-size: .875rem;
+  cursor: pointer; transition: background .2s;
+}
+.btn-cyan:hover { background: oklch(0.85 0.16 215/.25); }
+
+/* Chat widget */
+.chat-widget { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); display: none; }
+.chat-widget.open { display: block; }
+.chat-messages { max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: .75rem; margin-bottom: 1rem; }
+.chat-msg { padding: .6rem .875rem; border-radius: .65rem; font-size: .8rem; line-height: 1.55; max-width: 90%; }
+.chat-msg.bot  { background: oklch(1 0 0/.06); align-self: flex-start; }
+.chat-msg.user { background: oklch(0.85 0.22 145/.15); align-self: flex-end; color: var(--neon); }
+.chat-input-row { display: flex; gap: .5rem; }
+.chat-input {
+  flex: 1; padding: .5rem .875rem; border-radius: .65rem;
+  background: oklch(1 0 0/.06); border: 1px solid var(--border);
+  color: var(--fg); font-size: .8rem; outline: none;
+  transition: border-color .2s;
+}
+.chat-input:focus { border-color: oklch(0.85 0.22 145/.4); }
+.chat-send {
+  padding: .5rem .875rem; border-radius: .65rem; background: var(--neon);
+  color: oklch(0.13 0.04 270); border: none; cursor: pointer; font-weight: 700;
+  font-size: .8rem; transition: transform .15s;
+}
+.chat-send:hover { transform: scale(1.05); }
+
+/* ── FOOTER ──────────────────────────────────────────────── */
+#site-footer {
+  border-top: 1px solid var(--border);
+  background: oklch(0.13 0.04 270/.5);
+  backdrop-filter: blur(10px);
+  position: relative; z-index: 1;
+  padding: 3.5rem 0;
+}
+.footer-grid { display: grid; gap: 2.5rem; margin-bottom: 2.5rem; }
+@media (min-width: 640px)  { .footer-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .footer-grid { grid-template-columns: repeat(4, 1fr); } }
+
+.footer-brand { font-family: var(--font-display); font-size: 1.15rem; font-weight: 900; margin-bottom: 1rem; }
+.footer-tagline { font-size: .875rem; color: var(--muted); }
+.footer-col-title { font-weight: 600; margin-bottom: 1rem; }
+.footer-links { display: flex; flex-direction: column; gap: .6rem; }
+.footer-links a {
+  font-size: .875rem; color: var(--muted); text-decoration: none;
+  cursor: pointer; transition: color .2s;
+}
+.footer-links a:hover { color: var(--neon); }
+.footer-social { display: flex; gap: 1rem; }
+.social-btn {
+  background: none; border: none; color: var(--muted);
+  cursor: pointer; padding: .25rem; transition: color .2s;
+}
+.social-btn:hover { color: var(--neon); }
+.footer-bottom {
+  border-top: 1px solid var(--border); padding-top: 2rem;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 1rem;
+}
+.footer-copy { font-size: .875rem; color: var(--muted); }
+.footer-ver  { font-family: var(--font-mono); font-size: .75rem; color: oklch(0.72 0.04 260/.6); }
+
+/* ── NOT FOUND ───────────────────────────────────────────── */
+#page-404 {
+  padding-top: 72px; min-height: 100vh;
+  display: none; align-items: center; justify-content: center;
+  text-align: center;
+}
+#page-404.active { display: flex; }
+.nf-code { font-family: var(--font-mono); font-size: 6rem; font-weight: 900; color: var(--neon); line-height: 1; }
+.nf-title { font-size: 2rem; font-weight: 700; margin: 1rem 0 .75rem; }
+.nf-sub { color: var(--muted); margin-bottom: 2rem; }
+
+/* Spinner */
+.spinner {
+  width: 1.1rem; height: 1.1rem; border-radius: 50%;
+  border: 2px solid oklch(0.13 0.04 270/.4);
+  border-top-color: oklch(0.13 0.04 270);
+  animation: spin .6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* SVG icons */
+svg { display: block; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ─────────────────────────────────────────────── -->
+<header id="site-header">
+  <div class="container">
+    <div class="nav-inner">
+      <a class="nav-logo" onclick="navigate('home')" href="#" aria-label="Roboyan home">ROBOYAN</a>
+      <nav aria-label="Main navigation">
+        <ul class="nav-links">
+          <li><a onclick="navigate('home')"    href="#" data-page="home">Home</a></li>
+          <li><a onclick="navigate('courses')" href="#" data-page="courses">Courses</a></li>
+          <li><a onclick="navigate('about')"   href="#" data-page="about">About</a></li>
+          <li><a onclick="navigate('contact')" href="#" data-page="contact">Contact</a></li>
+        </ul>
+      </nav>
+      <button class="nav-toggle" onclick="toggleMobile()" aria-label="Toggle menu" aria-expanded="false" id="nav-toggle-btn">
+        <svg id="icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg id="icon-x" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <nav id="mobile-nav" class="nav-mobile" aria-label="Mobile navigation">
+      <a onclick="navigate('home');closeMobile()"    href="#" data-page="home">Home</a>
+      <a onclick="navigate('courses');closeMobile()" href="#" data-page="courses">Courses</a>
+      <a onclick="navigate('about');closeMobile()"   href="#" data-page="about">About</a>
+      <a onclick="navigate('contact');closeMobile()" href="#" data-page="contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════
+     HOME PAGE
+════════════════════════════════════════════════════════════ -->
+<main id="page-home" class="page active">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="glass hero-badge fade-up">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+          Project-First Ed-Tech
+        </div>
+        <h1 class="fade-up-2">
+          Build robots. Code AI.<br>
+          <span class="text-gradient">Defy gravity.</span>
+        </h1>
+        <p class="hero-sub fade-up-3">
+          Roboyan turns curious students into creators — Drones, IoT, AI/ML and
+          Robotics taught through real projects, not slides.
+        </p>
+        <div class="hero-ctas fade-up-4">
+          <a class="btn-primary" onclick="navigate('contact')" href="#">
+            Enroll Now
+          </a>
+          <a class="btn-ghost" onclick="navigate('courses')" href="#">
+            Explore Courses →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating 3D feel icons -->
+    <div class="float-icon glass neon-border fi-drone" aria-hidden="true">
+      <!-- Plane icon -->
+      <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21 4 19 4c-1 0-2 .5-2.5 1L13 9 4.8 6.2C3.9 5.9 3 6.4 3 7.3L3 9l5 3-2 2-4-1-1 1 3 2 2 3 1-1-1-4 2-2 3 5 2-.6-.3-8.5Z"/></svg>
+    </div>
+    <div class="float-icon glass fi-code" aria-hidden="true" style="border-radius:1.25rem;padding:1.25rem;border:1px solid oklch(1 0 0/.1)">
+      <!-- Code2 icon -->
+      <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l-6-6 6-6"/><path d="M15 6l6 6-6 6"/></svg>
+    </div>
+    <div class="float-icon glass fi-chip" aria-hidden="true" style="border-radius:.875rem;border:1px solid oklch(1 0 0/.1)">
+      <!-- Cpu icon -->
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+    </div>
+  </section>
+
+  <!-- Domain Cards -->
+  <section class="domain-section">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:3rem">
+        <span class="section-label">Interested Domains</span>
+        <h2 class="section-title">Pick your <span class="text-gradient">superpower</span></h2>
+      </div>
+      <div class="cards-grid" id="home-domain-cards"></div>
+    </div>
+  </section>
+
+  <!-- Course Matrix -->
+  <section class="matrix-section">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:3rem">
+        <span class="section-label">Course Catalog</span>
+        <h2 class="section-title">Our <span class="text-gradient">Curriculum</span></h2>
+      </div>
+      <div class="courses-grid" id="home-course-grid"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══════════════════════════════════════════════════════════
+     COURSES PAGE
+════════════════════════════════════════════════════════════ -->
+<main id="page-courses" class="page">
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="section-label">/ Courses</span>
+      <h1>Learn Through <span class="text-gradient">Projects</span></h1>
+      <p>Explore our comprehensive curriculum across AI/ML, Robotics &amp; IoT, and Drone Tech &amp; 3D. Each course is designed to build real skills through hands-on projects.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="filter-row" id="filter-row">
+      <button class="filter-btn active" onclick="filterCourses('All',this)">All</button>
+      <button class="filter-btn" onclick="filterCourses('AI / ML',this)">AI / ML</button>
+      <button class="filter-btn" onclick="filterCourses('Robotics &amp; IoT',this)">Robotics &amp; IoT</button>
+      <button class="filter-btn" onclick="filterCourses('Drone Tech &amp; 3D',this)">Drone Tech &amp; 3D</button>
+    </div>
+  </div>
+
+  <!-- Domain cards (repeated on courses page) -->
+  <section class="domain-section" style="padding-top:1rem">
+    <div class="container">
+      <div class="cards-grid" id="courses-domain-cards"></div>
+    </div>
+  </section>
+
+  <section class="matrix-section" style="padding-top:2rem">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:3rem">
+        <span class="section-label">Course Catalog</span>
+        <h2 class="section-title">Our <span class="text-gradient">Curriculum</span></h2>
+      </div>
+      <div class="courses-grid" id="courses-course-grid"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══════════════════════════════════════════════════════════
+     ABOUT PAGE
+════════════════════════════════════════════════════════════ -->
+<main id="page-about" class="page">
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="section-label">/ About</span>
+      <h1>Redefining <span class="text-gradient">Education</span></h1>
+      <p>Roboyan is on a mission to transform how the next generation learns technology. We believe that the best education happens when students build, experiment, and create real solutions to real problems.</p>
+    </div>
+  </section>
+
+  <!-- Founders -->
+  <section class="domain-section">
+    <div class="container">
+      <h2 class="section-title" style="margin-bottom:2rem">Meet the <span class="text-gradient">Founders</span></h2>
+      <div class="founders-grid">
+        <div class="glass founder-card reveal">
+          <div class="founder-avatar">JS</div>
+          <div class="founder-name">Jyotirmoy Saha</div>
+          <div class="founder-role">Co-Founder &amp; Vision Lead</div>
+        </div>
+        <div class="glass founder-card reveal reveal-d1">
+          <div class="founder-avatar">RK</div>
+          <div class="founder-name">Rajveer Kuri</div>
+          <div class="founder-role">Co-Founder &amp; Tech Lead</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="domain-section" style="padding-top:1rem">
+    <div class="container">
+      <h2 class="section-title" style="margin-bottom:2rem">Our <span class="text-gradient">Values</span></h2>
+      <div class="values-grid">
+        <div class="glass value-card reveal">
+          <div class="value-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a7 7 0 017 7c0 5-7 13-7 13S5 14 5 9a7 7 0 017-7z"/><circle cx="12" cy="9" r="2"/></svg>
+          </div>
+          <div class="value-title">Project-First Learning</div>
+          <p class="value-desc">Students learn by building real projects, not memorizing slides. Every concept is grounded in hands-on creation.</p>
+        </div>
+        <div class="glass value-card reveal reveal-d1">
+          <div class="value-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="value-title">Community &amp; Collaboration</div>
+          <p class="value-desc">We foster a vibrant community where students learn from each other, share ideas, and grow together.</p>
+        </div>
+        <div class="glass value-card reveal reveal-d2">
+          <div class="value-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+          </div>
+          <div class="value-title">Future-Ready Skills</div>
+          <p class="value-desc">Our curriculum focuses on the skills that matter: AI, robotics, IoT, and 3D design for tomorrow's creators.</p>
+        </div>
+        <div class="glass value-card reveal reveal-d3">
+          <div class="value-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </div>
+          <div class="value-title">Passion Over Pressure</div>
+          <p class="value-desc">We believe in nurturing genuine curiosity and passion for technology, not just grades and certifications.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══════════════════════════════════════════════════════════
+     CONTACT PAGE
+════════════════════════════════════════════════════════════ -->
+<main id="page-contact" class="page">
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="section-label">/ Contact</span>
+      <h1>Join the <span class="text-gradient">Revolution</span></h1>
+      <p>Ready to start your journey? Fill out the form below and let's get you enrolled in the perfect course.</p>
+    </div>
+  </section>
+
+  <section style="padding:2rem 0 5rem">
+    <div class="container" style="max-width:900px">
+      <div class="glass" style="border-radius:1.25rem;overflow:hidden;padding:0">
+        <iframe
+          src="https://docs.google.com/forms/d/e/1FAIpQLSfit4boaJ4gfTyYGqseAILt_OUsjORzOT7Pk7KlJCi30qcRfw/viewform?embedded=true"
+          width="100%"
+          height="1020"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+          title="Roboyan Enrollment Form"
+          style="display:block;background:transparent"
+          loading="lazy"
+        >Loading…</iframe>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- 404 -->
+<main id="page-404" class="page">
+  <div>
+    <div class="nf-code">404</div>
+    <h1 class="nf-title">Page Not Found</h1>
+    <p class="nf-sub">Oops — this page doesn't exist.</p>
+    <a class="btn-primary" onclick="navigate('home')" href="#" style="display:inline-flex">Go Home</a>
+  </div>
+</main>
+
+<!-- ── FOOTER ─────────────────────────────────────────────── -->
+<footer id="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand text-gradient">ROBOYAN</div>
+        <p class="footer-tagline">Project-first ed-tech for the next generation</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Quick Links</div>
+        <div class="footer-links">
+          <a onclick="navigate('home')"    href="#">Home</a>
+          <a onclick="navigate('courses')" href="#">Courses</a>
+          <a onclick="navigate('about')"   href="#">About</a>
+          <a onclick="navigate('contact')" href="#">Contact</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Domains</div>
+        <div class="footer-links" style="cursor:default">
+          <span style="font-size:.875rem;color:var(--muted)">AI / ML</span>
+          <span style="font-size:.875rem;color:var(--muted)">Robotics &amp; IoT</span>
+          <span style="font-size:.875rem;color:var(--muted)">Drone Tech &amp; 3D</span>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Follow Us</div>
+        <div class="footer-social">
+          <button class="social-btn" title="Coming soon" aria-label="GitHub">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 00-1-3.2c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 004 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+          </button>
+          <button class="social-btn" title="Coming soon" aria-label="LinkedIn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+          </button>
+          <button class="social-btn" title="Coming soon" aria-label="Twitter / X">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy" id="footer-year"></p>
+      <p class="footer-ver">v2.0 · Project-First Ed-Tech</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════════════════════
+     JAVASCRIPT — zero external deps
+════════════════════════════════════════════════════════════ -->
+<script>
+/* ── Data ─────────────────────────────────────────────────── */
+const DOMAINS = [
+  {
+    key: 'AI / ML',
+    icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9.5 2A2.5 2.5 0 017 4.5v.5H5a2 2 0 00-2 2v3a2 2 0 002 2h.5v.5A2.5 2.5 0 0010 15v1.5A2.5 2.5 0 0012.5 19h.5v.5a2.5 2.5 0 005 0V19h.5A2.5 2.5 0 0021 16.5v-9A2.5 2.5 0 0018.5 5H18v-.5A2.5 2.5 0 0015.5 2h-6z"/><circle cx="9" cy="9" r="1"/><circle cx="15" cy="9" r="1"/><path d="M9 13s1 2 3 2 3-2 3-2"/></svg>`,
+    color: 'var(--neon)', cls: 'dc-ai ci-ai',
+    desc: 'Train models in Google Colab & Kaggle. Build chatbots, vision and ML projects from day one.',
+    tags: ['Python','Colab','Kaggle','Sklearn'],
+  },
+  {
+    key: 'Robotics & IoT',
+    icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>`,
+    color: 'var(--neon-c)', cls: 'dc-rob ci-rob',
+    desc: 'ESP32, Arduino and Tinkercad. Wire up sensors, control motors, ship real hardware.',
+    tags: ['ESP32','Arduino','Tinkercad','Sensors'],
+  },
+  {
+    key: 'Drone Tech & 3D',
+    icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21 4 19 4c-1 0-2 .5-2.5 1L13 9 4.8 6.2C3.9 5.9 3 6.4 3 7.3L3 9l5 3-2 2-4-1-1 1 3 2 2 3 1-1-1-4 2-2 3 5 2-.6-.3-8.5Z"/></svg>`,
+    color: 'var(--neon-v)', cls: 'dc-drone ci-drone',
+    desc: 'Assemble drones, design parts in 3D, and pilot what you built. Sky is the curriculum.',
+    tags: ['Assembly','3D Design','Flight','FPV'],
+  },
+];
+
+const COURSES = [
+  { code:'PY101',  name:'Python Basics',     level:'Beginner',     hrs:20, domain:'AI / ML' },
+  { code:'PY201',  name:'Advanced Python',   level:'Intermediate', hrs:30, domain:'AI / ML' },
+  { code:'DRN101', name:'Drone Assembly',    level:'Beginner',     hrs:25, domain:'Drone Tech & 3D' },
+  { code:'IOT101', name:'IoT Essentials',    level:'Beginner',     hrs:24, domain:'Robotics & IoT' },
+  { code:'ROB101', name:'Robotics',          level:'Intermediate', hrs:32, domain:'Robotics & IoT' },
+  { code:'3D101',  name:'3D Design',         level:'Beginner',     hrs:18, domain:'Drone Tech & 3D' },
+  { code:'WEB101', name:'Web Development',   level:'Beginner',     hrs:28, domain:'AI / ML' },
+  { code:'APP101', name:'App Development',   level:'Intermediate', hrs:35, domain:'AI / ML' },
+];
+
+/* ── Render helpers ───────────────────────────────────────── */
+function domainCardHTML(d, delay) {
+  const [cardCls, iconCls] = d.cls.split(' ');
+  const tags = d.tags.map(t=>`<span class="tag">${t}</span>`).join('');
+  return `
+    <div class="glass domain-card ${cardCls} reveal reveal-d${delay}" style="transition-delay:${delay*0.08}s">
+      <div class="card-icon ${iconCls}">${d.icon}</div>
+      <h3 class="card-title">${d.key}</h3>
+      <p class="card-desc">${d.desc}</p>
+      <div class="tags">${tags}</div>
+    </div>`;
+}
+
+function courseCardHTML(c, i) {
+  const lvlCls = {Beginner:'level-b',Intermediate:'level-i',Advanced:'level-a'}[c.level]||'';
+  return `
+    <div class="glass course-card reveal" style="transition-delay:${i*0.05}s">
+      <div class="course-header">
+        <span class="course-code font-mono">${c.code}</span>
+        <span class="font-mono ${lvlCls}" style="font-size:.7rem;font-weight:600">${c.level}</span>
+      </div>
+      <div class="course-name">${c.name}</div>
+      <div class="course-footer">
+        <span>${c.domain}</span>
+        <span class="font-mono">${c.hrs}h</span>
+      </div>
+    </div>`;
+}
+
+function renderDomains(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = DOMAINS.map((d,i) => domainCardHTML(d, i+1)).join('');
+}
+
+function renderCourses(containerId, filter) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const filtered = filter ? COURSES.filter(c=>c.domain===filter) : COURSES;
+  el.innerHTML = filtered.map((c,i) => courseCardHTML(c,i)).join('');
+  observeReveal();
+}
+
+/* ── Router ───────────────────────────────────────────────── */
+const PAGES = ['home','courses','about','contact'];
+let currentPage = 'home';
+
+function navigate(page) {
+  if (!PAGES.includes(page)) page = '404';
+
+  // hide all
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  // show target
+  const target = document.getElementById('page-' + page);
+  if (target) target.classList.add('active');
+
+  // update nav links
+  document.querySelectorAll('[data-page]').forEach(a => {
+    a.classList.toggle('active', a.dataset.page === page);
+  });
+
+  // scroll top
+  window.scrollTo(0,0);
+  currentPage = page;
+
+  // lazy-render
+  if (page === 'home') {
+    renderDomains('home-domain-cards');
+    renderCourses('home-course-grid', null);
+  } else if (page === 'courses') {
+    renderDomains('courses-domain-cards');
+    renderCourses('courses-course-grid', null);
+    // reset filter button
+    document.querySelectorAll('.filter-btn').forEach((b,i)=>b.classList.toggle('active', i===0));
+  }
+
+  observeReveal();
+  return false;
+}
+
+/* ── Mobile nav ───────────────────────────────────────────── */
+function toggleMobile() {
+  const nav = document.getElementById('mobile-nav');
+  const btn = document.getElementById('nav-toggle-btn');
+  const open = nav.classList.toggle('open');
+  btn.setAttribute('aria-expanded', open);
+  document.getElementById('icon-menu').style.display = open ? 'none' : 'block';
+  document.getElementById('icon-x').style.display   = open ? 'block' : 'none';
+}
+function closeMobile() {
+  document.getElementById('mobile-nav').classList.remove('open');
+  document.getElementById('icon-menu').style.display = 'block';
+  document.getElementById('icon-x').style.display   = 'none';
+  document.getElementById('nav-toggle-btn').setAttribute('aria-expanded','false');
+}
+
+/* ── Course filter ────────────────────────────────────────── */
+function filterCourses(domain, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const filter = domain === 'All' ? null : domain;
+  renderCourses('courses-course-grid', filter);
+}
+
+/* ── Scroll reveal ────────────────────────────────────────── */
+let observer;
+function observeReveal() {
+  if (observer) observer.disconnect();
+  observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
+
+/* ── Enrollment form ──────────────────────────────────────── */
+function handleEnroll(e) {
+  e.preventDefault();
+  const name    = document.getElementById('f-name');
+  const email   = document.getElementById('f-email');
+  const course  = document.getElementById('f-course');
+  const msg     = document.getElementById('f-msg');
+  let valid = true;
+
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  function setErr(field, errId, cond) {
+    const err = document.getElementById(errId);
+    if (cond) { field.classList.add('error'); err.classList.add('show'); valid = false; }
+    else       { field.classList.remove('error'); err.classList.remove('show'); }
+  }
+  setErr(name,   'err-name',   !name.value.trim());
+  setErr(email,  'err-email',  !email.value.trim() || !emailRe.test(email.value));
+  setErr(course, 'err-course', !course.value);
+  setErr(msg,    'err-msg',    !msg.value.trim());
+  if (!valid) return;
+
+  // Simulate submission (no real backend in this standalone file)
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Submitting…';
+
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Enroll Now`;
+    document.getElementById('enroll-form').reset();
+    const succ = document.getElementById('status-success');
+    succ.classList.add('show');
+    setTimeout(() => succ.classList.remove('show'), 4000);
+  }, 1400);
+}
+
+/* ── Chat widget ──────────────────────────────────────────── */
+const BOT_RESPONSES = [
+  "Great! Tell me what topics excite you most — AI, robots, drones, or coding?",
+  "Awesome! Are you a complete beginner or do you have some experience?",
+  "Based on what you said, I'd recommend starting with {course}. Want to know more about it?",
+  "That sounds like a great fit! You can enroll using the form on the left. Good luck on your journey! 🚀",
+];
+
+const RECS = {
+  ai:['Python Basics','Advanced Python'],
+  robot:['Robotics','IoT Essentials'],
+  drone:['Drone Assembly','3D Design'],
+  code:['Web Development','App Development'],
+};
+
+let chatStep = 0;
+let chatOpen = false;
+let userInterest = '';
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  const widget = document.getElementById('chat-widget');
+  const btn    = document.getElementById('chat-toggle-btn');
+  widget.classList.toggle('open', chatOpen);
+  btn.textContent = chatOpen ? 'Hide' : 'Get Recommendation';
+  if (chatOpen && chatStep === 0) {
+    setTimeout(() => addBotMsg("Hi! I'm here to help you find the perfect Roboyan course. What are you most interested in? (AI, robots, drones, or coding)"), 300);
+    chatStep = 1;
+  }
+}
+
+function addBotMsg(text) {
+  const el = document.createElement('div');
+  el.className = 'chat-msg bot';
+  el.textContent = text;
+  document.getElementById('chat-messages').appendChild(el);
+  document.getElementById('chat-messages').scrollTop = 9999;
+}
+function addUserMsg(text) {
+  const el = document.createElement('div');
+  el.className = 'chat-msg user';
+  el.textContent = text;
+  document.getElementById('chat-messages').appendChild(el);
+  document.getElementById('chat-messages').scrollTop = 9999;
+}
+
+function sendChat() {
+  const input = document.getElementById('chat-input');
+  const text  = input.value.trim();
+  if (!text) return;
+  addUserMsg(text);
+  input.value = '';
+
+  const lower = text.toLowerCase();
+  setTimeout(() => {
+    if (chatStep === 1) {
+      if      (lower.includes('ai') || lower.includes('ml') || lower.includes('python')) userInterest = 'ai';
+      else if (lower.includes('robot') || lower.includes('iot'))                          userInterest = 'robot';
+      else if (lower.includes('drone') || lower.includes('3d'))                           userInterest = 'drone';
+      else                                                                                 userInterest = 'code';
+      addBotMsg("Excellent choice! Are you a complete beginner, or do you have some experience already?");
+      chatStep = 2;
+    } else if (chatStep === 2) {
+      const rec = RECS[userInterest] || ['Python Basics'];
+      const pick = lower.includes('beginner') || lower.includes('no') || lower.includes('new') ? rec[0] : (rec[1]||rec[0]);
+      addBotMsg(`Based on your interests, I'd recommend starting with "${pick}". It's a great fit!`);
+      chatStep = 3;
+    } else {
+      addBotMsg("You can use the enrollment form on the left to sign up. Good luck on your Roboyan journey! 🚀");
+      chatStep = 0;
+    }
+  }, 500);
+}
+
+/* ── Footer year ──────────────────────────────────────────── */
+document.getElementById('footer-year').textContent = `© ${new Date().getFullYear()} Roboyan. All rights reserved.`;
+
+/* ── Init ─────────────────────────────────────────────────── */
+navigate('home');
+observeReveal();
+</script>
+</body>
+</html>
